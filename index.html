@@ -1,0 +1,158 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Live BTC Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    .stat {
+      font-size: 1.5rem;
+      margin: 0.5rem 0;
+    }
+    .positive { color: green; }
+    .negative { color: red; }
+  </style>
+</head>
+<body>
+  <h1>📊 Real-Time BTC Trading Stats</h1>
+  <div class="stat">🔹 LTP: ₹<span id="ltp">--</span></div>
+  <div class="stat">🟢 Buy Price: ₹<span id="buy_price">--</span></div>
+  <div class="stat">💰 Capital: ₹<span id="capital">--</span></div>
+  <div class="stat">📉 P&L: ₹<span id="pnl">--</span></div>
+
+  <script>
+    function updateData() {
+      fetch('/data')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('ltp').textContent = data.ltp.toFixed(2);
+          document.getElementById('buy_price').textContent = data.buy_price.toFixed(2);
+          document.getElementById('capital').textContent = data.capital.toFixed(2);
+
+          const pnlElem = document.getElementById('pnl');
+          pnlElem.textContent = data.pnl.toFixed(2);
+          pnlElem.className = data.pnl >= 0 ? 'positive' : 'negative';
+        });
+    }
+
+    setInterval(updateData, 300); // refresh every 300ms
+  </script>
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Live BTC Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+      background: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    .stat {
+      font-size: 1.5rem;
+      margin: 0.5rem 0;
+    }
+    .positive {
+      color: green;
+    }
+    .negative {
+      color: red;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      margin-top: 1rem;
+      cursor: pointer;
+    }
+
+    .box-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 1rem;
+    }
+
+    .trade-box {
+      width: 16px;
+      height: 16px;
+      border-radius: 3px;
+      display: inline-block;
+      cursor: pointer;
+    }
+
+    .trade-box.positive {
+      background-color: #4caf50;
+    }
+
+    .trade-box.negative {
+      background-color: #f44336;
+    }
+  </style>
+</head>
+<body>
+  <h1>📊 Real-Time BTC Trading Stats</h1>
+  <div class="stat">🔹 LTP: ₹<span id="ltp">--</span></div>
+  <div class="stat">🟢 Buy Price: ₹<span id="buy_price">--</span></div>
+  <div class="stat">💰 Capital: ₹<span id="capital">--</span></div>
+  <div class="stat">📉 P&L: ₹<span id="pnl">--</span></div>
+
+  <button onclick="squareOff()">🔻 Square Off Position</button>
+
+  <div class="stat">📈 Trade History:</div>
+  <div id="trade-boxes" class="box-container"></div>
+
+  <script>
+    function updateData() {
+      fetch('/data')
+        .then(res => res.json())
+        .then(data => {
+          document.getElementById('ltp').textContent = data.ltp.toFixed(2);
+          document.getElementById('buy_price').textContent = data.buy_price.toFixed(2);
+          document.getElementById('capital').textContent = data.capital.toFixed(2);
+
+          const pnlElem = document.getElementById('pnl');
+          pnlElem.textContent = data.pnl.toFixed(2);
+          pnlElem.className = data.pnl >= 0 ? 'positive' : 'negative';
+
+          // Trade history boxes
+          const tradeBoxes = document.getElementById('trade-boxes');
+          tradeBoxes.innerHTML = '';
+          data.trades.forEach(pnl => {
+            const box = document.createElement('div');
+            box.className = 'trade-box ' + (pnl >= 0 ? 'positive' : 'negative');
+            box.title = (pnl >= 0 ? '+' : '') + pnl.toFixed(2);  // hover tooltip
+            tradeBoxes.appendChild(box);
+          });
+        });
+    }
+
+    function squareOff() {
+      fetch('/squareoff', { method: 'POST' })
+        .then(res => res.text())
+        .then(msg => {
+          alert(msg);
+          updateData();
+        });
+    }
+
+    setInterval(updateData, 300); // Refresh every 300ms
+    updateData(); // Initial call
+  </script>
+</body>
+</html>

@@ -195,10 +195,3 @@ node server.js
 
 
 ---
-
-If you want, I can:
-- add a `requirements.txt` and `Makefile` for building/running the pieces,
-- fix and make `main.cpp` compile cleanly (e.g., add missing `#include <vector>` and provide a tested compile command), or
-- convert the polling UI to a WebSocket push.
-
-Tell me which next step you'd like me to take.
